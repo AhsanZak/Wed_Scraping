@@ -1,21 +1,38 @@
 import schedule
 import time
+import requests
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import dbconnect as db
 
+# Function to extract data using Requests and Beautiful Soup
+def scrape_with_requests(url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Extracting data (modify as needed)
+    title = soup.title.text
+    paragraphs = soup.find_all('p')
+
+    return title, paragraphs
+
 # Function to extract data using Selenium
 def scrape_with_selenium():
-
     url = 'https://www.imdb.com/chart/top/'
     
+    print(scrape_with_requests(url))
+
     imdb_movie_list = main_scraping_process(url)
     res = db.insert_movies_rows(imdb_movie_list)
     return "success"
 
 
 def main_scraping_process(url):
+    # This function get the movie data from the imdb site.
+
     service = Service(executable_path="chromedriver.exe")
     driver = webdriver.Chrome(service=service)
     
@@ -39,8 +56,10 @@ def main_scraping_process(url):
 # scrape_with_selenium()
 
 
-schedule.every(1).minutes.do(scrape_with_selenium)
+# Schedule the scraping task every day at a specified time
+schedule.every().day.at("12:00").do(scrape_with_selenium)
 # Run the scheduler indefinitely
 while True:
     schedule.run_pending()
     time.sleep(1)
+
