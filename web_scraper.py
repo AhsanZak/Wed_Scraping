@@ -19,8 +19,7 @@ def scrape_with_requests(url):
 
     return title, paragraphs
 
-# Function to extract data using Selenium
-def scrape_with_selenium():
+def scrape_tech():
     url = 'https://www.imdb.com/chart/top/'
     
     print(scrape_with_requests(url))
@@ -30,6 +29,7 @@ def scrape_with_selenium():
     return "success"
 
 
+# Function to extract data using Selenium
 def main_scraping_process(url):
     # This function get the movie data from the imdb site.
 
@@ -50,14 +50,8 @@ def main_scraping_process(url):
     driver.quit()
     return empty_list
 
-
-# Scrape data using Selenium
-# movie_list = scrape_with_selenium(url_to_scrape)
-# scrape_with_selenium()
-
-
 # Schedule the scraping task every day at a specified time
-schedule.every().day.at("12:00").do(scrape_with_selenium)
+schedule.every().day.at("12:00").do(scrape_tech)
 # Run the scheduler indefinitely
 while True:
     schedule.run_pending()
