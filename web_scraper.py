@@ -10,18 +10,22 @@ def scrape_with_selenium(url):
     
     driver.get(url)
 
-    title = driver.title
-    movie_title = driver.find_elements(By.XPATH, '//h3[@class="ipc-title__text"]')
-    for i in movie_title:
-        print("i in movie title", i.text)
+    movie_elements = driver.find_elements(By.CLASS_NAME, 'ipc-metadata-list-summary-item')
+
+    empty_list = []
+
+    for movie_element in movie_elements:
+        movie_name = movie_element.find_element(By.CLASS_NAME, 'ipc-title__text').text.split('.')[1].strip()
+        release_date = movie_element.find_elements(By.CLASS_NAME, 'sc-be6f1408-8')[0].text
+        empty_list.append({"movie": movie_name, "release": release_date})
 
     driver.quit()
 
-    return title
+    return empty_list
 
 url_to_scrape = 'https://www.imdb.com/chart/top/'
 
 # Scrape data using Selenium
-title_selenium = scrape_with_selenium(url_to_scrape)
+movie_list = scrape_with_selenium(url_to_scrape)
 
-print("\nTitle (Selenium):", title_selenium)
+print("movie_list :", movie_list)
